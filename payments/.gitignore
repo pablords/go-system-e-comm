@@ -1,0 +1,8 @@
+.DS_Store
+*.log
+*.out
+coverage.html
+bin/
+tmp/
+.env.local
+*.pb.go

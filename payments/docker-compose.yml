@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  payments-db:
+    image: mysql:8.0
+    container_name: payments-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payments_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - payments-db-data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - payments-network
+
+  payments-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payments-service
+    environment:
+      DB_HOST: payments-db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: payments_db
+      GRPC_PORT: 50051
+    ports:
+      - "50051:50051"
+    depends_on:
+      - payments-db
+    networks:
+      - payments-network
+
+volumes:
+  payments-db-data:
+
+networks:
+  payments-network:
+    driver: bridge
