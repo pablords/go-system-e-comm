@@ -16,7 +16,7 @@ import (
 	"log/slog"
 	"time"
 
-	pb "payments-go/proto" // Ajuste para o import correto no projeto orders
+	pb "payments/proto" // Ajuste para o import correto no projeto orders
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

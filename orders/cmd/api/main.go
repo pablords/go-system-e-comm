@@ -3,15 +3,15 @@ package main
 import (
 	"log/slog"
 	"net/http"
-	"orders-go/internal/infra/database"
-	grpcClient "orders-go/internal/infra/grpc/client"
-	"orders-go/internal/infra/http/handler"
-	infraRepo "orders-go/internal/infra/repository"
-	"orders-go/internal/usecase"
+	"orders/internal/infra/database"
+	grpcClient "orders/internal/infra/grpc/client"
+	"orders/internal/infra/http/handler"
+	infraRepo "orders/internal/infra/repository"
+	"orders/internal/usecase"
 	"os"
 	"time"
 
-	_ "orders-go/docs"
+	_ "orders/docs"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

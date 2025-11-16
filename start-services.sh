@@ -2,7 +2,7 @@
 
 echo "🚀 Starting Payment Service..."
 cd payments
-./bin/payment-service &
+./bin/payments-service &
 PAYMENT_PID=$!
 echo "✅ Payment Service started (PID: $PAYMENT_PID)"
 

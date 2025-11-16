@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 	"log/slog"
-	"orders-go/internal/domain/entity"
+	"orders/internal/domain/entity"
 	"time"
 )
 

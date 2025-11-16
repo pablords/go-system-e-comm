@@ -972,7 +972,7 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\n" +
 	"GetPayment\x12\x1a.payment.GetPaymentRequest\x1a\x1b.payment.GetPaymentResponse\x12N\n" +
 	"\rCancelPayment\x12\x1d.payment.CancelPaymentRequest\x1a\x1e.payment.CancelPaymentResponse\x12K\n" +
-	"\fListPayments\x12\x1c.payment.ListPaymentsRequest\x1a\x1d.payment.ListPaymentsResponseB\x13Z\x11payments-go/protob\x06proto3"
+	"\fListPayments\x12\x1c.payment.ListPaymentsRequest\x1a\x1d.payment.ListPaymentsResponseB\x10Z\x0epayments/protob\x06proto3"
 
 var (
 	file_proto_payment_proto_rawDescOnce sync.Once

@@ -1,4 +1,10 @@
-.PHONY: test test-coverage test-unit test-integration run build docker-up docker-down clean
+.PHONY: test test-coverage test-unit test-integration run build docker-up docker-down clean proto
+
+# Generate proto files
+proto:
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		proto/payment.proto
 
 # Run all tests
 test:

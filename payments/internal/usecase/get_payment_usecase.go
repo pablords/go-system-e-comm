@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"payments-go/internal/domain/entity"
-	"payments-go/internal/domain/repository"
+	"payments/internal/domain/entity"
+	"payments/internal/domain/repository"
 )
 
 type GetPaymentUseCase struct {

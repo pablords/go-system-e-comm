@@ -8,11 +8,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"payments-go/internal/infra/database"
-	grpcHandler "payments-go/internal/infra/grpc/handler"
-	"payments-go/internal/infra/repository"
-	"payments-go/internal/usecase"
-	pb "payments-go/proto"
+	"payments/internal/infra/database"
+	grpcHandler "payments/internal/infra/grpc/handler"
+	"payments/internal/infra/repository"
+	"payments/internal/usecase"
+	pb "payments/proto"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"

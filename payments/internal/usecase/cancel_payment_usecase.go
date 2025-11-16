@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"payments-go/internal/domain/repository"
+	"payments/internal/domain/repository"
 )
 
 type CancelPaymentUseCase struct {

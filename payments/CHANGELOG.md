@@ -103,5 +103,5 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-[Unreleased]: https://github.com/seu-usuario/payments-go/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/seu-usuario/payments-go/releases/tag/v1.0.0
+[Unreleased]: https://github.com/seu-usuario/payments/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/seu-usuario/payments/releases/tag/v1.0.0

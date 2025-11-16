@@ -10,7 +10,7 @@ O `MockLogger` é uma implementação de mock do `slog.Logger` para uso em teste
 
 ```go
 import (
-    "orders-go/tests/mocks"
+    "orders/tests/mocks"
     "testing"
 )
 

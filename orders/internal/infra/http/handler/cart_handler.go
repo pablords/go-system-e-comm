@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"orders-go/internal/domain/entity"
-	"orders-go/internal/usecase"
+	"orders/internal/domain/entity"
+	"orders/internal/usecase"
 
 	"github.com/go-chi/chi/v5"
 )

@@ -3,7 +3,7 @@ package entity_test
 import (
 	"testing"
 
-	"payments-go/internal/domain/entity"
+	"payments/internal/domain/entity"
 )
 
 func TestNewPayment(t *testing.T) {

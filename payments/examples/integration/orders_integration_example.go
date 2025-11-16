@@ -4,8 +4,8 @@ package integration
 // Este arquivo demonstra como integrar o cliente de pagamento nos handlers do Orders
 
 // Ajuste os imports conforme sua estrutura de projeto
-// "orders-go/internal/infra/grpc/client"
-// pb "orders-go/proto"
+// "orders/internal/infra/grpc/client"
+// pb "orders/proto"
 
 /*
 // 1. No main.go do Orders, inicialize o cliente:

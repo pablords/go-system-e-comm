@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"payments-go/internal/domain/entity"
+	"payments/internal/domain/entity"
 )
 
 type PaymentRepository interface {

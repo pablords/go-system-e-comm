@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"errors"
-	"orders-go/internal/domain/entity"
-	"orders-go/internal/usecase"
-	"orders-go/tests/mocks"
+	"orders/internal/domain/entity"
+	"orders/internal/usecase"
+	"orders/tests/mocks"
 	"testing"
 )
 

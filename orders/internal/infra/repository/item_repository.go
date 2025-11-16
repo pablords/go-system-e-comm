@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"orders-go/internal/domain/entity"
+	"orders/internal/domain/entity"
 )
 
 type ItemRepositoryMySQL struct {

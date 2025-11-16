@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"orders-go/internal/usecase"
+	"orders/internal/usecase"
 
 	"github.com/go-chi/chi/v5"
 )

@@ -3,9 +3,9 @@ package handler
 import (
 	"context"
 	"log/slog"
-	"payments-go/internal/domain/entity"
-	"payments-go/internal/usecase"
-	pb "payments-go/proto"
+	"payments/internal/domain/entity"
+	"payments/internal/usecase"
+	pb "payments/proto"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

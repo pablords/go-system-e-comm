@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"orders-go/internal/domain/entity"
-	"orders-go/internal/domain/repository"
-	"orders-go/internal/infra/grpc/client"
+	"orders/internal/domain/entity"
+	"orders/internal/domain/repository"
+	"orders/internal/infra/grpc/client"
 )
 
 type CancelOrderUseCase struct {

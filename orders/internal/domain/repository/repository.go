@@ -1,6 +1,6 @@
 package repository
 
-import "orders-go/internal/domain/entity"
+import "orders/internal/domain/entity"
 
 type ProductRepository interface {
 	Create(product *entity.Product) error

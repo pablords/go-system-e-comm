@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"log/slog"
-	"orders-go/internal/domain/entity"
-	"orders-go/internal/domain/repository"
+	"orders/internal/domain/entity"
+	"orders/internal/domain/repository"
 )
 
 type OrderUseCase struct {

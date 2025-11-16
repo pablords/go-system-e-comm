@@ -39,7 +39,7 @@ import (
     "log/slog"
     "time"
 
-    pb "orders-go/proto"
+    pb "orders/proto"
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
 )

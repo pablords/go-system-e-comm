@@ -21,7 +21,7 @@ API robusta de gerenciamento de pedidos desenvolvida em Go.
 ## Estrutura do Projeto
 
 ```
-orders-go/
+orders/
 ├── cmd/api/              # Ponto de entrada da aplicação
 ├── internal/
 │   ├── domain/           # Camada de domínio

@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"payments-go/internal/domain/entity"
+	"payments/internal/domain/entity"
 	"time"
 )
 

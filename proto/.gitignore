@@ -1,0 +1,11 @@
+# Arquivos gerados
+*.pb.go
+
+# Arquivos temporários
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

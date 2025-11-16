@@ -95,11 +95,11 @@ Qualquer informação adicional relevante.
 
 ```bash
 # 1. Fork no GitHub, depois clone
-git clone https://github.com/SEU_USUARIO/payments-go.git
-cd payments-go
+git clone https://github.com/SEU_USUARIO/payments.git
+cd payments
 
 # 2. Adicione o repositório original como upstream
-git remote add upstream https://github.com/ORIGINAL_OWNER/payments-go.git
+git remote add upstream https://github.com/ORIGINAL_OWNER/payments.git
 
 # 3. Crie uma branch para sua feature
 git checkout -b feature/nome-da-feature
@@ -195,7 +195,7 @@ import (
     "github.com/google/uuid"
     
     // Internal packages
-    "payments-go/internal/domain/repository"
+    "payments/internal/domain/repository"
 )
 
 // Constants

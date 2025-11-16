@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"orders-go/internal/domain/entity"
+	"orders/internal/domain/entity"
 	"testing"
 )
 
