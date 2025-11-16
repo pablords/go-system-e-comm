@@ -72,6 +72,36 @@ definitions:
         example: 2
         type: integer
     type: object
+  handler.CancelOrderRequest:
+    properties:
+      payment_id:
+        type: string
+    type: object
+  handler.CreateOrderWithPaymentRequest:
+    properties:
+      customer_email:
+        type: string
+      customer_name:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/handler.OrderItemRequest'
+        type: array
+      payment_method:
+        description: 1=CREDIT_CARD, 2=DEBIT_CARD, 3=PIX, 4=BOLETO, 5=PAYPAL
+        type: integer
+    type: object
+  handler.CreateOrderWithPaymentResponse:
+    properties:
+      order_id:
+        type: string
+      payment_id:
+        type: string
+      status:
+        type: string
+      total:
+        type: number
+    type: object
   handler.CreateProductRequest:
     properties:
       description:
@@ -91,6 +121,20 @@ definitions:
     properties:
       error:
         type: string
+    type: object
+  handler.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.OrderItemRequest:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
     type: object
   handler.UpdateItemRequest:
     properties:
@@ -420,6 +464,71 @@ paths:
           schema:
             $ref: '#/definitions/handler.ErrorResponse'
       summary: Get order by ID
+      tags:
+      - orders
+  /orders/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancels an order and its associated payment via gRPC
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Payment ID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CancelOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Cancel order and payment
+      tags:
+      - orders
+  /orders/with-payment:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new order and processes payment via gRPC
+      parameters:
+      - description: Order and Payment Info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateOrderWithPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.CreateOrderWithPaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create order with payment processing
       tags:
       - orders
   /products:

@@ -1,0 +1,87 @@
+
+
+services:
+  orders-db:
+    image: mysql:8.0
+    container_name: orders_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orders_db
+      MYSQL_USER: orders_user
+      MYSQL_PASSWORD: orders_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - orders-db-data:/var/lib/mysql
+      - ./orders/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+      interval: 3s
+    networks:
+      - default
+
+  orders-api:
+    build:
+      context: ./orders
+      dockerfile: Dockerfile
+    container_name: orders_api
+    environment:
+      DB_HOST: orders-db
+      DB_PORT: 3306
+      DB_USER: orders_user
+      DB_PASSWORD: orders_pass
+      DB_NAME: orders_db
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./orders:/app
+    depends_on:
+      orders-db:
+        condition: service_healthy
+    networks:
+      - default
+
+  payments-db:
+    image: mysql:8.0
+    container_name: payments-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payments_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - payments-db-data:/var/lib/mysql
+      - ./payments/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - default
+
+  payments-service:
+    build:
+      context: ./payments
+      dockerfile: Dockerfile
+    container_name: payments-service
+    environment:
+      DB_HOST: payments-db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: payments_db
+      GRPC_PORT: 50051
+    ports:
+      - "50051:50051"
+    depends_on:
+      - payments-db
+    networks:
+      - default
+
+
+volumes:
+  orders-db-data:
+  payments-db-data:
+
+networks:
+  default:
+    driver: bridge

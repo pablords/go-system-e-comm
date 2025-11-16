@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"orders-go/internal/infra/database"
+	grpcClient "orders-go/internal/infra/grpc/client"
 	"orders-go/internal/infra/http/handler"
 	infraRepo "orders-go/internal/infra/repository"
 	"orders-go/internal/usecase"
@@ -57,19 +58,37 @@ func main() {
 	defer db.Close()
 	slog.Info("Database connected successfully")
 
+	// Connect to Payment Service via gRPC
+	paymentServiceAddr := os.Getenv("PAYMENT_SERVICE_ADDR")
+	if paymentServiceAddr == "" {
+		paymentServiceAddr = "localhost:50051"
+	}
+
+	paymentClient, err := grpcClient.NewPaymentClient(paymentServiceAddr, logger)
+	if err != nil {
+		slog.Error("Failed to connect to payment service", "error", err)
+		os.Exit(1)
+	}
+	defer paymentClient.Close()
+	slog.Info("Connected to payment service successfully", "addr", paymentServiceAddr)
+
 	// Initialize repositories
 	productRepo := infraRepo.NewProductRepository(db, logger)
 	orderRepo := infraRepo.NewOrderRepository(db, logger)
+	itemRepo := infraRepo.NewItemRepository(db)
 
 	// Initialize use cases
 	productUseCase := usecase.NewProductUseCase(productRepo, logger)
 	orderUseCase := usecase.NewOrderUseCase(orderRepo, logger)
 	cartUseCase := usecase.NewCartUseCase(orderRepo, productRepo, logger)
+	createOrderWithPaymentUseCase := usecase.NewCreateOrderUseCase(orderRepo, itemRepo, productRepo, paymentClient, logger)
+	cancelOrderUseCase := usecase.NewCancelOrderUseCase(orderRepo, paymentClient, logger)
 
 	// Initialize handlers
 	productHandler := handler.NewProductHandler(productUseCase, logger)
 	orderHandler := handler.NewOrderHandler(orderUseCase, logger)
 	cartHandler := handler.NewCartHandler(cartUseCase, logger)
+	orderWithPaymentHandler := handler.NewOrderWithPaymentHandler(createOrderWithPaymentUseCase, cancelOrderUseCase, logger)
 
 	// Setup router
 	r := chi.NewRouter()
@@ -116,6 +135,10 @@ func main() {
 			r.Get("/", orderHandler.List)
 			r.Get("/{id}", orderHandler.GetByID)
 			r.Delete("/{id}", orderHandler.Delete)
+
+			// Order with payment integration
+			r.Post("/with-payment", orderWithPaymentHandler.CreateOrderWithPayment)
+			r.Post("/{id}/cancel", orderWithPaymentHandler.CancelOrder)
 		})
 
 		// Cart routes
