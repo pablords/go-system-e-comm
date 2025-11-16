@@ -59,7 +59,10 @@ func (c *PaymentClient) ProcessPayment(ctx context.Context, orderID string, amou
 		CustomerName:  customerName,
 	}
 
+	c.logger.Info("About to call ProcessPayment gRPC", "order_id", orderID)
 	response, err := c.client.ProcessPayment(ctx, request)
+	c.logger.Info("ProcessPayment gRPC returned", "order_id", orderID, "error", err)
+
 	if err != nil {
 		c.logger.Error("Failed to process payment",
 			"error", err,

@@ -121,7 +121,21 @@ cd orders
 go run cmd/api/main.go
 ```
 
-### 5. Testar a Integração
+### 5. Popular o Banco com Produtos
+
+```bash
+./seed-products.sh
+```
+
+Este script cria 6 produtos de exemplo:
+- Notebook Dell Inspiron 15 - R$ 3.500,00
+- Mouse Logitech MX Master 3 - R$ 450,00
+- Teclado Mecânico Keychron K2 - R$ 650,00
+- Monitor LG UltraWide 34" - R$ 2.200,00
+- Webcam Logitech C920 - R$ 380,00
+- Fone Sony WH-1000XM5 - R$ 1.800,00
+
+### 6. Testar a Integração
 
 ```bash
 ./test-integration.sh
@@ -129,6 +143,10 @@ go run cmd/api/main.go
 
 Ou manualmente:
 ```bash
+# Primeiro, popule o banco com produtos
+./seed-products.sh
+
+# Depois, use o ID de um produto retornado
 curl -X POST http://localhost:8080/api/v1/orders/with-payment \
   -H "Content-Type: application/json" \
   -d '{
@@ -137,7 +155,7 @@ curl -X POST http://localhost:8080/api/v1/orders/with-payment \
     "payment_method": 1,
     "items": [
       {
-        "product_id": "prod-123",
+        "product_id": "<PRODUCT_ID>",
         "quantity": 2,
         "price": 50.00
       }

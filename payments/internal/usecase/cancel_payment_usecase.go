@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"payments-go/internal/domain/repository"
@@ -21,7 +22,7 @@ type CancelPaymentInput struct {
 	Reason    string
 }
 
-func (uc *CancelPaymentUseCase) Execute(input CancelPaymentInput) error {
+func (uc *CancelPaymentUseCase) Execute(ctx context.Context, input CancelPaymentInput) error {
 	if input.PaymentID == "" {
 		return fmt.Errorf("payment_id cannot be empty")
 	}
@@ -29,7 +30,7 @@ func (uc *CancelPaymentUseCase) Execute(input CancelPaymentInput) error {
 	slog.Info("Canceling payment", "payment_id", input.PaymentID, "reason", input.Reason)
 
 	// Find payment
-	payment, err := uc.paymentRepo.FindByID(input.PaymentID)
+	payment, err := uc.paymentRepo.FindByID(ctx, input.PaymentID)
 	if err != nil {
 		slog.Error("Failed to find payment", "payment_id", input.PaymentID, "error", err)
 		return err
@@ -42,7 +43,7 @@ func (uc *CancelPaymentUseCase) Execute(input CancelPaymentInput) error {
 	}
 
 	// Update payment in database
-	if err := uc.paymentRepo.Update(payment); err != nil {
+	if err := uc.paymentRepo.Update(ctx, payment); err != nil {
 		slog.Error("Failed to update payment", "payment_id", input.PaymentID, "error", err)
 		return fmt.Errorf("failed to update payment: %w", err)
 	}

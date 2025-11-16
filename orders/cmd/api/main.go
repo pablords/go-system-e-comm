@@ -75,13 +75,12 @@ func main() {
 	// Initialize repositories
 	productRepo := infraRepo.NewProductRepository(db, logger)
 	orderRepo := infraRepo.NewOrderRepository(db, logger)
-	itemRepo := infraRepo.NewItemRepository(db)
 
 	// Initialize use cases
 	productUseCase := usecase.NewProductUseCase(productRepo, logger)
 	orderUseCase := usecase.NewOrderUseCase(orderRepo, logger)
 	cartUseCase := usecase.NewCartUseCase(orderRepo, productRepo, logger)
-	createOrderWithPaymentUseCase := usecase.NewCreateOrderUseCase(orderRepo, itemRepo, productRepo, paymentClient, logger)
+	createOrderWithPaymentUseCase := usecase.NewCreateOrderUseCase(orderRepo, productRepo, paymentClient, logger)
 	cancelOrderUseCase := usecase.NewCancelOrderUseCase(orderRepo, paymentClient, logger)
 
 	// Initialize handlers

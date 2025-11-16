@@ -8,6 +8,7 @@ import (
 	"orders-go/internal/domain/repository"
 	"orders-go/internal/infra/grpc/client"
 	pb "orders-go/proto"
+	"time"
 )
 
 type OrderItemInput struct {
@@ -32,7 +33,6 @@ type CreateOrderOutput struct {
 
 type CreateOrderUseCase struct {
 	orderRepo     repository.OrderRepository
-	itemRepo      repository.ItemRepository
 	productRepo   repository.ProductRepository
 	paymentClient *client.PaymentClient
 	logger        *slog.Logger
@@ -40,14 +40,12 @@ type CreateOrderUseCase struct {
 
 func NewCreateOrderUseCase(
 	orderRepo repository.OrderRepository,
-	itemRepo repository.ItemRepository,
 	productRepo repository.ProductRepository,
 	paymentClient *client.PaymentClient,
 	logger *slog.Logger,
 ) *CreateOrderUseCase {
 	return &CreateOrderUseCase{
 		orderRepo:     orderRepo,
-		itemRepo:      itemRepo,
 		productRepo:   productRepo,
 		paymentClient: paymentClient,
 		logger:        logger,
@@ -67,13 +65,16 @@ func (uc *CreateOrderUseCase) Execute(ctx context.Context, input CreateOrderInpu
 			uc.logger.Warn("Product not found, creating temporary product",
 				"product_id", itemInput.ProductID,
 			)
-			
+
+			now := time.Now()
 			product = &entity.Product{
-				ID:    itemInput.ProductID,
-				Name:  "Product " + itemInput.ProductID,
-				Price: itemInput.Price,
+				ID:        itemInput.ProductID,
+				Name:      "Product " + itemInput.ProductID,
+				Price:     itemInput.Price,
+				CreatedAt: now,
+				UpdatedAt: now,
 			}
-			
+
 			if err := uc.productRepo.Create(product); err != nil {
 				uc.logger.Error("Failed to create product", "error", err)
 				return nil, fmt.Errorf("failed to create product: %w", err)
@@ -95,18 +96,10 @@ func (uc *CreateOrderUseCase) Execute(ctx context.Context, input CreateOrderInpu
 		return nil, entity.ErrEmptyOrder
 	}
 
-	// 3. Salvar pedido no banco
+	// 3. Salvar pedido no banco (isso já salva os items também)
 	if err := uc.orderRepo.Create(order); err != nil {
 		uc.logger.Error("Failed to save order", "error", err)
 		return nil, fmt.Errorf("failed to save order: %w", err)
-	}
-
-	// 4. Salvar items no banco
-	for _, item := range order.Items {
-		if err := uc.itemRepo.Create(&item); err != nil {
-			uc.logger.Error("Failed to save item", "error", err)
-			return nil, fmt.Errorf("failed to save item: %w", err)
-		}
 	}
 
 	uc.logger.Info("Order created successfully",
@@ -114,7 +107,7 @@ func (uc *CreateOrderUseCase) Execute(ctx context.Context, input CreateOrderInpu
 		"total", order.Total,
 	)
 
-	// 5. Processar pagamento via gRPC
+	// 4. Processar pagamento via gRPC
 	paymentResponse, err := uc.paymentClient.ProcessPayment(
 		ctx,
 		order.ID,
@@ -135,7 +128,7 @@ func (uc *CreateOrderUseCase) Execute(ctx context.Context, input CreateOrderInpu
 		return nil, fmt.Errorf("payment processing failed: %w", err)
 	}
 
-	// 6. Atualizar status do pedido baseado no pagamento
+	// 5. Atualizar status do pedido baseado no pagamento
 	switch paymentResponse.Status {
 	case pb.PaymentStatus_PAYMENT_STATUS_APPROVED:
 		order.Status = entity.OrderStatusPaid

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"payments-go/internal/domain/entity"
@@ -15,14 +16,15 @@ func NewPaymentRepositoryMySQL(db *sql.DB) *PaymentRepositoryMySQL {
 	return &PaymentRepositoryMySQL{db: db}
 }
 
-func (r *PaymentRepositoryMySQL) Create(payment *entity.Payment) error {
+func (r *PaymentRepositoryMySQL) Create(ctx context.Context, payment *entity.Payment) error {
 	query := `
 		INSERT INTO payments (id, order_id, amount, payment_method, status, transaction_id, 
 		                     customer_email, customer_name, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
-	_, err := r.db.Exec(
+	_, err := r.db.ExecContext(
+		ctx,
 		query,
 		payment.ID,
 		payment.OrderID,
@@ -43,7 +45,7 @@ func (r *PaymentRepositoryMySQL) Create(payment *entity.Payment) error {
 	return nil
 }
 
-func (r *PaymentRepositoryMySQL) FindByID(id string) (*entity.Payment, error) {
+func (r *PaymentRepositoryMySQL) FindByID(ctx context.Context, id string) (*entity.Payment, error) {
 	query := `
 		SELECT id, order_id, amount, payment_method, status, transaction_id,
 		       customer_email, customer_name, created_at, updated_at, canceled_at, cancel_reason
@@ -56,7 +58,7 @@ func (r *PaymentRepositoryMySQL) FindByID(id string) (*entity.Payment, error) {
 	var cancelReason sql.NullString
 	var transactionID sql.NullString
 
-	err := r.db.QueryRow(query, id).Scan(
+	err := r.db.QueryRowContext(ctx, query, id).Scan(
 		&payment.ID,
 		&payment.OrderID,
 		&payment.Amount,
@@ -94,7 +96,7 @@ func (r *PaymentRepositoryMySQL) FindByID(id string) (*entity.Payment, error) {
 	return payment, nil
 }
 
-func (r *PaymentRepositoryMySQL) FindByOrderID(orderID string) ([]*entity.Payment, error) {
+func (r *PaymentRepositoryMySQL) FindByOrderID(ctx context.Context, orderID string) ([]*entity.Payment, error) {
 	query := `
 		SELECT id, order_id, amount, payment_method, status, transaction_id,
 		       customer_email, customer_name, created_at, updated_at, canceled_at, cancel_reason
@@ -103,7 +105,7 @@ func (r *PaymentRepositoryMySQL) FindByOrderID(orderID string) ([]*entity.Paymen
 		ORDER BY created_at DESC
 	`
 
-	rows, err := r.db.Query(query, orderID)
+	rows, err := r.db.QueryContext(ctx, query, orderID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find payments by order_id: %w", err)
 	}
@@ -154,14 +156,15 @@ func (r *PaymentRepositoryMySQL) FindByOrderID(orderID string) ([]*entity.Paymen
 	return payments, nil
 }
 
-func (r *PaymentRepositoryMySQL) Update(payment *entity.Payment) error {
+func (r *PaymentRepositoryMySQL) Update(ctx context.Context, payment *entity.Payment) error {
 	query := `
 		UPDATE payments
 		SET status = ?, transaction_id = ?, updated_at = ?, canceled_at = ?, cancel_reason = ?
 		WHERE id = ?
 	`
 
-	_, err := r.db.Exec(
+	_, err := r.db.ExecContext(
+		ctx,
 		query,
 		payment.Status,
 		payment.TransactionID,
@@ -178,10 +181,10 @@ func (r *PaymentRepositoryMySQL) Update(payment *entity.Payment) error {
 	return nil
 }
 
-func (r *PaymentRepositoryMySQL) Delete(id string) error {
+func (r *PaymentRepositoryMySQL) Delete(ctx context.Context, id string) error {
 	query := "DELETE FROM payments WHERE id = ?"
 
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete payment: %w", err)
 	}
@@ -189,7 +192,7 @@ func (r *PaymentRepositoryMySQL) Delete(id string) error {
 	return nil
 }
 
-func (r *PaymentRepositoryMySQL) List() ([]*entity.Payment, error) {
+func (r *PaymentRepositoryMySQL) List(ctx context.Context) ([]*entity.Payment, error) {
 	query := `
 		SELECT id, order_id, amount, payment_method, status, transaction_id,
 		       customer_email, customer_name, created_at, updated_at, canceled_at, cancel_reason
@@ -197,7 +200,7 @@ func (r *PaymentRepositoryMySQL) List() ([]*entity.Payment, error) {
 		ORDER BY created_at DESC
 	`
 
-	rows, err := r.db.Query(query)
+	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list payments: %w", err)
 	}

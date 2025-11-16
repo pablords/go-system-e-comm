@@ -28,28 +28,55 @@ echo -e "${GREEN}✅ Payment Service is running${NC}"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "SETUP: Creating sample products"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Create Product 1
+PROD1_RESPONSE=$(curl -s -X POST http://localhost:8080/api/v1/products \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Product 1",
+    "description": "Test product for integration",
+    "price": 50.00
+  }')
+PRODUCT_ID_1=$(echo "$PROD1_RESPONSE" | jq -r '.id')
+echo "✅ Product 1 created: $PRODUCT_ID_1"
+
+# Create Product 2
+PROD2_RESPONSE=$(curl -s -X POST http://localhost:8080/api/v1/products \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Product 2",
+    "description": "Another test product",
+    "price": 100.00
+  }')
+PRODUCT_ID_2=$(echo "$PROD2_RESPONSE" | jq -r '.id')
+echo "✅ Product 2 created: $PRODUCT_ID_2"
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "TEST 1: Create Order with Payment"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 RESPONSE=$(curl -s -X POST http://localhost:8080/api/v1/orders/with-payment \
   -H "Content-Type: application/json" \
-  -d '{
-    "customer_email": "teste@example.com",
-    "customer_name": "Cliente Teste",
-    "payment_method": 1,
-    "items": [
+  -d "{
+    \"customer_email\": \"teste@example.com\",
+    \"customer_name\": \"Cliente Teste\",
+    \"payment_method\": 1,
+    \"items\": [
       {
-        "product_id": "prod-123",
-        "quantity": 2,
-        "price": 50.00
+        \"product_id\": \"$PRODUCT_ID_1\",
+        \"quantity\": 2,
+        \"price\": 50.00
       },
       {
-        "product_id": "prod-456",
-        "quantity": 1,
-        "price": 100.00
+        \"product_id\": \"$PRODUCT_ID_2\",
+        \"quantity\": 1,
+        \"price\": 100.00
       }
     ]
-  }')
+  }")
 
 echo "Response:"
 echo "$RESPONSE" | jq '.'
@@ -126,3 +153,9 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🎉 Integration Tests Completed!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+echo ""
+echo "🧹 Cleaning up test products..."
+curl -s -X DELETE http://localhost:8080/api/v1/products/$PRODUCT_ID_1 > /dev/null
+curl -s -X DELETE http://localhost:8080/api/v1/products/$PRODUCT_ID_2 > /dev/null
+echo "✅ Test products deleted"

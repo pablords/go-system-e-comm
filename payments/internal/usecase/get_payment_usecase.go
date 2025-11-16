@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"payments-go/internal/domain/entity"
@@ -17,14 +18,14 @@ func NewGetPaymentUseCase(paymentRepo repository.PaymentRepository) *GetPaymentU
 	}
 }
 
-func (uc *GetPaymentUseCase) Execute(paymentID string) (*entity.Payment, error) {
+func (uc *GetPaymentUseCase) Execute(ctx context.Context, paymentID string) (*entity.Payment, error) {
 	if paymentID == "" {
 		return nil, fmt.Errorf("payment_id cannot be empty")
 	}
 
 	slog.Info("Getting payment", "payment_id", paymentID)
 
-	payment, err := uc.paymentRepo.FindByID(paymentID)
+	payment, err := uc.paymentRepo.FindByID(ctx, paymentID)
 	if err != nil {
 		slog.Error("Failed to get payment", "payment_id", paymentID, "error", err)
 		return nil, err

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"payments-go/internal/domain/entity"
@@ -35,8 +36,15 @@ type ProcessPaymentOutput struct {
 	TransactionID string
 }
 
-func (uc *ProcessPaymentUseCase) Execute(input ProcessPaymentInput) (*ProcessPaymentOutput, error) {
+func (uc *ProcessPaymentUseCase) Execute(ctx context.Context, input ProcessPaymentInput) (*ProcessPaymentOutput, error) {
 	slog.Info("Processing payment", "order_id", input.OrderID, "amount", input.Amount, "method", input.PaymentMethod)
+
+	// Check if context is cancelled
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 
 	// Create new payment
 	payment, err := entity.NewPayment(
@@ -77,10 +85,12 @@ func (uc *ProcessPaymentUseCase) Execute(input ProcessPaymentInput) (*ProcessPay
 	}
 
 	// Save payment to database
-	if err := uc.paymentRepo.Create(payment); err != nil {
+	slog.Info("About to save payment to database", "payment_id", payment.ID)
+	if err := uc.paymentRepo.Create(ctx, payment); err != nil {
 		slog.Error("Failed to save payment", "error", err)
 		return nil, fmt.Errorf("failed to save payment: %w", err)
 	}
+	slog.Info("Payment saved successfully", "payment_id", payment.ID)
 
 	message := "Payment processed successfully"
 	if payment.Status == entity.PaymentStatusDeclined {

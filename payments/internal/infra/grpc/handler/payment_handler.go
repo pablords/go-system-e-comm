@@ -46,7 +46,7 @@ func (s *PaymentServiceServer) ProcessPayment(ctx context.Context, req *pb.Proce
 		CustomerName:  req.CustomerName,
 	}
 
-	output, err := s.processPaymentUC.Execute(input)
+	output, err := s.processPaymentUC.Execute(ctx, input)
 	if err != nil {
 		slog.Error("Failed to process payment", "error", err)
 		return nil, err
@@ -65,7 +65,7 @@ func (s *PaymentServiceServer) ProcessPayment(ctx context.Context, req *pb.Proce
 func (s *PaymentServiceServer) GetPayment(ctx context.Context, req *pb.GetPaymentRequest) (*pb.GetPaymentResponse, error) {
 	slog.Info("Received GetPayment request", "payment_id", req.PaymentId)
 
-	payment, err := s.getPaymentUC.Execute(req.PaymentId)
+	payment, err := s.getPaymentUC.Execute(ctx, req.PaymentId)
 	if err != nil {
 		slog.Error("Failed to get payment", "error", err)
 		return nil, err
@@ -91,7 +91,7 @@ func (s *PaymentServiceServer) CancelPayment(ctx context.Context, req *pb.Cancel
 		Reason:    req.Reason,
 	}
 
-	err := s.cancelPaymentUC.Execute(input)
+	err := s.cancelPaymentUC.Execute(ctx, input)
 	if err != nil {
 		slog.Error("Failed to cancel payment", "error", err)
 		return &pb.CancelPaymentResponse{
@@ -110,7 +110,7 @@ func (s *PaymentServiceServer) CancelPayment(ctx context.Context, req *pb.Cancel
 func (s *PaymentServiceServer) ListPayments(ctx context.Context, req *pb.ListPaymentsRequest) (*pb.ListPaymentsResponse, error) {
 	slog.Info("Received ListPayments request", "order_id", req.OrderId)
 
-	payments, err := s.listPaymentsUC.Execute(req.OrderId)
+	payments, err := s.listPaymentsUC.Execute(ctx, req.OrderId)
 	if err != nil {
 		slog.Error("Failed to list payments", "error", err)
 		return nil, err
